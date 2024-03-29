@@ -36,4 +36,13 @@ struct column {
 typedef struct column COLUMN;
 
 
+/**
+* Create a new column
+* @param1 : Column type
+* @param2 : Column title
+* @return : Pointer to the created column
+*/
+COLUMN* create_column(ENUM_TYPE type, char *title);
+
+
 #endif //CDATAFRAME_SANCHEZ_BENHAMED_AUBRY_COLUMN_H

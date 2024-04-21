@@ -5,13 +5,19 @@
 #include "column.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define ASC 0
 #define DESC 1
 
 
 COLUMN* create_column(ENUM_TYPE type, char *title){
-    COLUMN *new_column = (COLUMN*) malloc(sizeof(COLUMN));
+    COLUMN *ptr, *new_column;
+
+    ptr = (COLUMN*) malloc(sizeof(COLUMN));
+    if (ptr == NULL) {return NULL;}
+    new_column = ptr;
+
     new_column->title = title;
     new_column->size = 0;
     new_column->max_size = 0;

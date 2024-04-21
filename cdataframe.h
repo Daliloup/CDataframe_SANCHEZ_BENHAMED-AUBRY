@@ -6,15 +6,17 @@
 #define CDATAFRAME_H
 
 #include "list.h"
+#include "column.h"
 
 typedef list CDATAFRAME;
 
 
 // Basic Operations (Constructors, selectors, etc...)
-CDATAFRAME *create_cdataframe(int size);  // No type required in parameter
+CDATAFRAME *create_cdataframe();  // Will return empty doubly linked list;
 void delete_cdataframe(CDATAFRAME **cdf);
 void add_empty_column(CDATAFRAME *cdf, char *col_name, ENUM_TYPE *cdftype);
-void delete_column(CDATAFRAME *cdf, char *col_name);
+void delete_column_cdataframe(CDATAFRAME *cdf, char *col_name);
+void delete_row_cdataframe(CDATAFRAME *cdf, int index);
 void *get_value_cdataframe(CDATAFRAME *cdf, int col, int row);
 void *set_value_cdataframe(CDATAFRAME *cdf, int col, int row, void *new_value);
 void rename_col_cdataframe(CDATAFRAME *cdf, char *title, char *new_title);
@@ -28,13 +30,13 @@ int is_in_cdataframe(CDATAFRAME *cdf, void *value);
 // User Input
 void fill_cdataframe(CDATAFRAME *cdf);
 void add_column_user(CDATAFRAME *cdf);
-void add_row_cdataframe(CDATAFRAME *cdf);
-void delete_row_cdataframe(CDATAFRAME *cdf, int index);
+void add_row_user(CDATAFRAME *cdf);
+void set_new_value_cdataframe(CDATAFRAME *cdf, int i, int j);  // uses user input function from column.h
+void display_partial_cdataframe(CDATAFRAME *cdf);  // user inputs the section he wants to see
 
 
 // Display
 void display_cdataframe(CDATAFRAME *cdf);
-void display_partial_cdataframe(CDATAFRAME *cdf);  // user inputs the section he wants to see
 void display_col_names(CDATAFRAME *cdf);
 void display_nb_rows(CDATAFRAME *cdf);
 void display_nb_columns(CDATAFRAME *cdf);

@@ -127,4 +127,4 @@ void *get_previous_elem(list * lst, lnode * lnode) {
     if (lnode == NULL)
         return NULL;
     return lnode->prev;
-
+    }

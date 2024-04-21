@@ -16,5 +16,5 @@ Several choices were needed to be made, here they are :
 
 The double linked lists are made with the structure *lnode_*
 
-The idea is first to make the basic functionalities, for simply manipulations of the dataframe : adding an element to a column, etc...
+The idea is first to make the basic functionalities, for simple manipulations of the dataframe : adding an element to a column, etc...
 but also to add more advanced tools, such as sorting functions, etc..

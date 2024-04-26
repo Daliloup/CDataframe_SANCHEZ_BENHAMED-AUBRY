@@ -42,7 +42,6 @@ typedef struct column COLUMN;
 
 int sizeof_coldata_ptr(COLUMN *col);
 
-int insert_value(COLUMN *col, void *value);
 
 /**
 * Create a new column

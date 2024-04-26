@@ -2,8 +2,8 @@
 // Created by Yannis on 29/03/2024.
 //
 
-#ifndef CDATAFRAME_SANCHEZ_BENHAMED_AUBRY_COLUMN_H
-#define CDATAFRAME_SANCHEZ_BENHAMED_AUBRY_COLUMN_H
+#ifndef COLUMN_H
+#define COLUMN_H
 
 #define REALLOC_SIZE 256
 
@@ -38,6 +38,9 @@ struct column {
     int sort_dir;
 };
 typedef struct column COLUMN;
+
+
+int sizeof_coldata_ptr(COLUMN *col);
 
 int insert_value(COLUMN *col, void *value);
 
@@ -175,4 +178,4 @@ int search_value_in_column(COLUMN *col, void *val);
 */
 void replace_value_column(COLUMN *col, int i);  // User Input
 
-#endif //CDATAFRAME_SANCHEZ_BENHAMED_AUBRY_COLUMN_H
+#endif //COLUMN_H

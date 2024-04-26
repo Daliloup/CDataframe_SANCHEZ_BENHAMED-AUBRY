@@ -10,6 +10,19 @@
 #define ASC 0
 #define DESC 1
 
+int sizeof_coldata_ptr(COLUMN *col)
+{
+    switch (col->column_type) {
+        case UINT: return sizeof(unsigned int*);
+        case INT: return sizeof(int*);
+        case CHAR: return sizeof(char*);
+        case FLOAT: return sizeof(float*);
+        case DOUBLE: return sizeof(double*);
+        case STRING: return sizeof(char**);
+        default: return sizeof(NULL);
+    }
+}
+
 
 COLUMN* create_column(ENUM_TYPE type, char *title){
     COLUMN *ptr, *new_column;
@@ -33,56 +46,26 @@ COLUMN* create_column(ENUM_TYPE type, char *title){
 int insert_value(COLUMN *col, void *value){
 // check memory space
     if (col->size == col->max_size){
-        printf("\nCheck 1");
-        printf("\n%llu", _msize(col));
-        col = (COLUMN*) realloc(col, _msize(col)+256);
-        printf("\n%llu", _msize(col));
-        printf("\nCheck 2");
-        printf("\n%d", col->max_size);
-        col->max_size += 256/sizeof(col->column_type);
-        printf("\nCheck 3");
-        printf("\n%d", col->max_size);
+        void *ptr = NULL, *ptr2 = NULL;
+
+        if (col->max_size == 0) {
+            ptr = malloc(sizeof_coldata_ptr(col) * REALLOC_SIZE);
+            ptr2 = (int*) malloc(sizeof(int) * REALLOC_SIZE);
+        } else {
+            ptr = realloc(col->data, col->max_size + REALLOC_SIZE);
+            ptr2 = (int*) realloc(col->index, col->max_size + REALLOC_SIZE);
+        }
+
+        if ((ptr == NULL) || (ptr2 == NULL)) {
+            return 0;
+        }
+        col->data = ptr;
+        col->index = ptr2;
+
+        col->max_size = col->max_size + REALLOC_SIZE;
     }
-    /*
-     * This function doesn't work yet and produces an error when called
-     * because col->data is set to NULL when creating a column
-     */
-    switch(col->column_type){
-        case NULLVAL:
-            col->data[col->size] = NULL;
-            break;
-        case UINT:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(unsigned int));
-            *((unsigned int*)col->data[col->size])= *((unsigned int*)value);
-            break;
-        case INT:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(int));
-            *((int*)col->data[col->size])= *((int*)value);
-            break;
-        case CHAR:
-            printf("\nIt's a char");
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(char));
-            printf("check 4");
-            *((char*)col->data[col->size])= *((char*)value);
-            printf("check 5");
-            break;
-        case FLOAT:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(float));
-            *((float*)col->data[col->size])= *((float*)value);
-            break;
-        case DOUBLE:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(double));
-            *((double*)col->data[col->size])= *((double*)value);
-            break;
-        case STRING:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(char*));
-            *((char**)col->data[col->size])= *((char**)value);
-            break;
-        case STRUCTURE:
-            col->data[col->size] = (COL_TYPE*) malloc (sizeof(int));
-            *((int*)col->data[col->size])= *((int*)value);
-            break;
-    }
+
+    col->data[col->size] = value;
     col->size++;
     return 1;
 }

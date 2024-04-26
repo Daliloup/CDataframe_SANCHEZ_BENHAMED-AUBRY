@@ -8,17 +8,26 @@
 int main()
 {
     COLUMN *col = create_column(INT, "COLUMN 1");
-    int value = 1, value2=2, value3=3;
+    int v0 = 0, v1 = 1, v2 = 2, v3 = 3;
 
-    insert_value(col, &value);
+    insert_value(col, &v1);
     for (int i = 0; i < col->size; i++) {
-        printf("%d\n\n", *col->data[i]);
+        printf("%d ", *col->data[i]);
     }
 
-    insert_value(col, &value2);
-    insert_value(col, &value3);
+    printf("\n");
+    insert_value(col, &v2);
+    insert_value(col, &v1);
     for (int i = 0; i < col->size; i++) {
-        printf("%d\n", *col->data[i]);
+        printf("%d ", *col->data[i]);
     }
+    printf("\n");
+
+    printf("%d", *(int*)value_with_position(col, 2));
+
+    //printf("\n%d\n", v2);
+    //printf("Occurrences: %d\n", occurrence(col, &v2));
+    //printf("Greater: %d\n", greater_than(col, &v2));
+    //printf("Lower: %d", lower_than(col, &v2));
     return 0;
 }

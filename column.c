@@ -66,6 +66,150 @@ int insert_value(COLUMN *col, void *value){
     }
 
     col->data[col->size] = value;
+    col->index[col->size] = col->size;
     col->size++;
     return 1;
+}
+
+void delete_column(COLUMN **col)
+{
+    if ((*col)->max_size != 0) {
+        free((*col)->data);
+        free((*col)->index);
+    }
+    free(*col);
+    *col = NULL;
+}
+
+
+int occurrence(COLUMN *col, void *x)
+{
+    int s = 0;
+    for (int i = 0; i < col->size; i++) {
+        switch (col->column_type) {
+            case (UINT):
+                if (*(unsigned int*)(col->data[i]) == *((unsigned int*) x)) {
+                    s++;
+                }
+                break;
+            case (INT):
+                if (*((int*)(col->data[i])) == *((int*) x)) {
+                    s++;
+                }
+                break;
+            case (CHAR):
+                if (*(char*)(col->data[i]) == *((char*) x)) {
+                    s++;
+                }
+                break;
+            case (FLOAT):
+                if (*(float*)(col->data[i]) == *((float*) x)) {
+                    s++;
+                }
+                break;
+            case (DOUBLE):
+                if (*(double*)(col->data[i]) == *((double*) x)) {
+                    s++;
+                }
+                break;
+            case (STRING):
+                if (strcmp(*(char**)(col->data[i]), *((char**) x)) == 0) {
+                    s++;
+                }
+                break;
+            default:;
+        }
+    }
+    return s;
+}
+
+int greater_than(COLUMN *col, void *x)
+{
+    int s = 0;
+    for (int i = 0; i < col->size; i++) {
+        switch (col->column_type) {
+            case (UINT):
+                if (*(unsigned int*)(col->data[i]) > *((unsigned int*) x)) {
+                    s++;
+                }
+                break;
+            case (INT):
+                if (*((int*)(col->data[i])) > *((int*) x)) {
+                    s++;
+                }
+                break;
+            case (CHAR):
+                if (*(char*)(col->data[i]) > *((char*) x)) {
+                    s++;
+                }
+                break;
+            case (FLOAT):
+                if (*(float*)(col->data[i]) > *((float*) x)) {
+                    s++;
+                }
+                break;
+            case (DOUBLE):
+                if (*(double*)(col->data[i]) > *((double*) x)) {
+                    s++;
+                }
+                break;
+            case (STRING):
+                if (strcmp(*(char**)(col->data[i]), *((char**) x)) > 0) {
+                    s++;
+                }
+                break;
+            default:;
+        }
+    }
+    return s;
+}
+
+int lower_than(COLUMN *col, void *x)
+{
+    int s = 0;
+    for (int i = 0; i < col->size; i++) {
+        switch (col->column_type) {
+            case (UINT):
+                if (*(unsigned int*)(col->data[i]) < *((unsigned int*) x)) {
+                    s++;
+                }
+                break;
+            case (INT):
+                if (*((int*)(col->data[i])) < *((int*) x)) {
+                    s++;
+                }
+                break;
+            case (CHAR):
+                if (*(char*)(col->data[i]) < *((char*) x)) {
+                    s++;
+                }
+                break;
+            case (FLOAT):
+                if (*(float*)(col->data[i]) < *((float*) x)) {
+                    s++;
+                }
+                break;
+            case (DOUBLE):
+                if (*(double*)(col->data[i]) < *((double*) x)) {
+                    s++;
+                }
+                break;
+            case (STRING):
+                if (strcmp(*(char**)(col->data[i]), *((char**) x)) < 0) {
+                    s++;
+                }
+                break;
+            default:;
+        }
+    }
+    return s;
+}
+
+void* value_with_position(COLUMN *col, int pos)
+{
+    int i = 0;
+    while ((col->index[i] != pos) && (i < col->size)) ++i;
+
+    if (i == col->size) return NULL;
+    return col->data[i];
 }

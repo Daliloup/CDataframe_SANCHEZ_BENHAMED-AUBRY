@@ -7,6 +7,9 @@
 
 #define REALLOC_SIZE 256
 
+#define ASC 0
+#define DESC 1
+
 
 enum enum_type
 {
@@ -41,6 +44,12 @@ typedef struct column COLUMN;
 
 
 int sizeof_coldata_ptr(COLUMN *col);
+
+// Compares two values of the type given by enum_type
+// -1: val1 < val2
+// 0: val1 == val2
+// 1: val1 > val2
+int data_cmp(ENUM_TYPE enum_type, void *val1, void *val2);
 
 int insert_value(COLUMN *col, void *value);
 
@@ -101,6 +110,9 @@ int occurrence(COLUMN *col, void *x);
  * @return the element pointed by the pointer at index pos in the column
  */
 void* value_with_position(COLUMN *col, int pos);
+
+// Returns the corresponding index in data
+int index_convert(COLUMN *col, int i);
 
 
 /**

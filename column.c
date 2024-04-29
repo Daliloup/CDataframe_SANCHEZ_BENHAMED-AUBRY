@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define ASC 0
-#define DESC 1
-
 int sizeof_coldata_ptr(COLUMN *col)
 {
     switch (col->column_type) {
@@ -21,6 +18,40 @@ int sizeof_coldata_ptr(COLUMN *col)
         case STRING: return sizeof(char**);
         default: return sizeof(NULL);
     }
+}
+
+int data_cmp(ENUM_TYPE enum_type, void *val1, void *val2)
+{
+    int i = 0, j;
+    switch (enum_type) {
+        case UINT:
+            if (*(unsigned int*)val1 < *(unsigned int*)val2) i = -1;
+            else if (*(unsigned int*)val1 > *(unsigned int*)val2) i = 1;
+            break;
+        case INT:
+            if (*(int*)val1 < *(int*)val2) i = -1;
+            else if (*(int*)val1 > *(int*)val2) i = 1;
+            break;
+        case CHAR:
+            if (*(char*)val1 < *(char*)val2) i = -1;
+            else if (*(char*)val1 > *(char*)val2) i = 1;
+            break;
+        case FLOAT:
+            if (*(float*)val1 < *(float*)val2) i = -1;
+            else if (*(float*)val1 > *(float*)val2) i = 1;
+            break;
+        case DOUBLE:
+            if (*(double*)val1 < *(double*)val2) i = -1;
+            else if (*(double*)val1 > *(double*)val2) i = 1;
+            break;
+        case STRING:
+            j = strcmp(val1, val2);
+            if (j < 0) i = -1;
+            else if (j > 0) i = 1;
+            break;
+        default:;
+    }
+    return i;
 }
 
 
@@ -71,11 +102,21 @@ int insert_value(COLUMN *col, void *value){
     return 1;
 }
 
+int index_convert(COLUMN *col, int i)
+{
+    int j = 0;
+    while ((col->index[i] != i) && (i < col->size)) ++j;
+
+    if (j == col->size) return -1;
+    return j;
+}
+
 void delete_column(COLUMN **col)
 {
     if ((*col)->max_size != 0) {
         free((*col)->data);
         free((*col)->index);
+        free((*col)->title);
     }
     free(*col);
     *col = NULL;
@@ -86,39 +127,7 @@ int occurrence(COLUMN *col, void *x)
 {
     int s = 0;
     for (int i = 0; i < col->size; i++) {
-        switch (col->column_type) {
-            case (UINT):
-                if (*(unsigned int*)(col->data[i]) == *((unsigned int*) x)) {
-                    s++;
-                }
-                break;
-            case (INT):
-                if (*((int*)(col->data[i])) == *((int*) x)) {
-                    s++;
-                }
-                break;
-            case (CHAR):
-                if (*(char*)(col->data[i]) == *((char*) x)) {
-                    s++;
-                }
-                break;
-            case (FLOAT):
-                if (*(float*)(col->data[i]) == *((float*) x)) {
-                    s++;
-                }
-                break;
-            case (DOUBLE):
-                if (*(double*)(col->data[i]) == *((double*) x)) {
-                    s++;
-                }
-                break;
-            case (STRING):
-                if (strcmp(*(char**)(col->data[i]), *((char**) x)) == 0) {
-                    s++;
-                }
-                break;
-            default:;
-        }
+        s += (data_cmp(col->column_type, x, col->data[i]) == 0);
     }
     return s;
 }
@@ -127,39 +136,7 @@ int greater_than(COLUMN *col, void *x)
 {
     int s = 0;
     for (int i = 0; i < col->size; i++) {
-        switch (col->column_type) {
-            case (UINT):
-                if (*(unsigned int*)(col->data[i]) > *((unsigned int*) x)) {
-                    s++;
-                }
-                break;
-            case (INT):
-                if (*((int*)(col->data[i])) > *((int*) x)) {
-                    s++;
-                }
-                break;
-            case (CHAR):
-                if (*(char*)(col->data[i]) > *((char*) x)) {
-                    s++;
-                }
-                break;
-            case (FLOAT):
-                if (*(float*)(col->data[i]) > *((float*) x)) {
-                    s++;
-                }
-                break;
-            case (DOUBLE):
-                if (*(double*)(col->data[i]) > *((double*) x)) {
-                    s++;
-                }
-                break;
-            case (STRING):
-                if (strcmp(*(char**)(col->data[i]), *((char**) x)) > 0) {
-                    s++;
-                }
-                break;
-            default:;
-        }
+        s += (data_cmp(col->column_type, x, col->data[i]) == 1);
     }
     return s;
 }
@@ -168,48 +145,50 @@ int lower_than(COLUMN *col, void *x)
 {
     int s = 0;
     for (int i = 0; i < col->size; i++) {
-        switch (col->column_type) {
-            case (UINT):
-                if (*(unsigned int*)(col->data[i]) < *((unsigned int*) x)) {
-                    s++;
-                }
-                break;
-            case (INT):
-                if (*((int*)(col->data[i])) < *((int*) x)) {
-                    s++;
-                }
-                break;
-            case (CHAR):
-                if (*(char*)(col->data[i]) < *((char*) x)) {
-                    s++;
-                }
-                break;
-            case (FLOAT):
-                if (*(float*)(col->data[i]) < *((float*) x)) {
-                    s++;
-                }
-                break;
-            case (DOUBLE):
-                if (*(double*)(col->data[i]) < *((double*) x)) {
-                    s++;
-                }
-                break;
-            case (STRING):
-                if (strcmp(*(char**)(col->data[i]), *((char**) x)) < 0) {
-                    s++;
-                }
-                break;
-            default:;
-        }
+        s += (data_cmp(col->column_type, x, col->data[i]) == -1);
     }
     return s;
 }
 
 void* value_with_position(COLUMN *col, int pos)
 {
-    int i = 0;
-    while ((col->index[i] != pos) && (i < col->size)) ++i;
+    pos = index_convert(col, pos);
 
-    if (i == col->size) return NULL;
-    return col->data[i];
+    if (pos == -1) return NULL;
+    return col->data[pos];
+}
+
+void replace_value_column(COLUMN *col, int i)
+{
+    i = index_convert(col, i);
+
+    if (i == -1) return;
+
+    switch (col->column_type) {
+        case UINT:
+            printf("Enter value (u_int): ");
+            scanf(" %u", col->data[i]);
+            break;
+        case INT:
+            printf("Enter value (int): ");
+            scanf(" %d", col->data[i]);
+            break;
+        case CHAR:
+            printf("Enter value (char): ");
+            scanf(" %c", col->data[i]);
+            break;
+        case FLOAT:
+            printf("Enter value (float): ");
+            scanf(" %f", col->data[i]);
+            break;
+        case DOUBLE:
+            printf("Enter value (int): ");
+            scanf(" %lf", col->data[i]);
+            break;
+        case STRING:
+            printf("Enter value (int): ");
+            gets(col->data[i]);
+            break;
+        default:;
+    }
 }

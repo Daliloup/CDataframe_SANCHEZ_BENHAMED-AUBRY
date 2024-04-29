@@ -17,13 +17,18 @@ int main()
 
     printf("\n");
     insert_value(col, &v2);
-    insert_value(col, &v1);
+    insert_value(col, &v3);
     for (int i = 0; i < col->size; i++) {
         printf("%d ", *col->data[i]);
     }
     printf("\n");
 
-    printf("%d", *(int*)value_with_position(col, 2));
+    //replace_value_column(col, 1);
+    //for (int i = 0; i < col->size; i++) {
+    //    printf("%d ", *col->data[i]);
+    //}
+
+    //printf("%d", data_cmp(UINT, &v3, &v2));
 
     //printf("\n%d\n", v2);
     //printf("Occurrences: %d\n", occurrence(col, &v2));

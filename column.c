@@ -111,12 +111,50 @@ int index_convert(COLUMN *col, int i)
     return j;
 }
 
+
+void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
+    int num_of_char;
+    if (col->data[i] == NULL) {
+        strcpy(str, "NULL");
+        return ;
+    }
+    switch (col->column_type) {
+        case UINT: {
+           num_of_char = snprintf(str, size, "%llu", *(col->data[i]));
+           break;
+        }
+        case INT: {
+            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            break;
+        }
+        case CHAR: {
+            num_of_char = snprintf(str, size, "%char", *(col->data[i]));
+            break;
+        }
+        case FLOAT: {
+            num_of_char = snprintf(str, size, "%f", *(col->data[i]));
+            break;
+        }
+        case DOUBLE: {
+            num_of_char = snprintf(str, size, "%lf", *(col->data[i]));
+            break;
+        }
+        case STRING: {
+            num_of_char = snprintf(str, size, "%s", *(col->data[i]));
+            break;
+        }
+        case NULLVAL: {
+            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            break;
+        }
+    }
+}
+
 void delete_column(COLUMN **col)
 {
     if ((*col)->max_size != 0) {
         free((*col)->data);
         free((*col)->index);
-        free((*col)->title);
     }
     free(*col);
     *col = NULL;

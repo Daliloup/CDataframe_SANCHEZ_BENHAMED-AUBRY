@@ -80,35 +80,47 @@ void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
     }
     switch (col->column_type) {
         case UINT: {
-           num_of_char = snprintf(str, size, "%llu", *(col->data[i]));
+           snprintf(str, size, "%llu", *(col->data[i]));
            break;
         }
         case INT: {
-            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            snprintf(str, size, "%d", *(col->data[i]));
             break;
         }
         case CHAR: {
-            num_of_char = snprintf(str, size, "%char", *(col->data[i]));
+            snprintf(str, size, "%char", *(col->data[i]));
             break;
         }
         case FLOAT: {
-            num_of_char = snprintf(str, size, "%f", *(col->data[i]));
+            snprintf(str, size, "%f", *(col->data[i]));
             break;
         }
         case DOUBLE: {
-            num_of_char = snprintf(str, size, "%lf", *(col->data[i]));
+            snprintf(str, size, "%lf", *(col->data[i]));
             break;
         }
         case STRING: {
-            num_of_char = snprintf(str, size, "%s", *(col->data[i]));
+            snprintf(str, size, "%s", *(col->data[i]));
             break;
         }
         case NULLVAL: {
-            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            snprintf(str, size, "%d", *(col->data[i]));
             break;
         }
     }
 }
+
+void print_col(COLUMN* col){
+    char* string = (char*) malloc(sizeof(char*));
+    int i;
+    for (i=0 ; i < col->size ; i++){
+        convert_value(col, i, string, 100);
+        printf("[%d] %s\n", i, string);
+    }
+    free(string);
+}
+
+
 
 void delete_column(COLUMN **col)
 {

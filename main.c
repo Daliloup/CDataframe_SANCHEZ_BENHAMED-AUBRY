@@ -11,22 +11,15 @@ int main()
     int v0 = 0, v1 = 1, v2 = 2, v3 = 3;
 
     insert_value(col, &v1);
-    for (int i = 0; i < col->size; i++) {
-        printf("%d ", *col->data[i]);
-    }
-
-    printf("\n");
     insert_value(col, &v2);
     insert_value(col, &v3);
-    for (int i = 0; i < col->size; i++) {
-        printf("%d ", *col->data[i]);
-    }
-    printf("\n");
 
     //replace_value_column(col, 1);
     //for (int i = 0; i < col->size; i++) {
     //    printf("%d ", *col->data[i]);
     //}
+
+    print_col(col);
 
     //printf("%d", data_cmp(UINT, &v3, &v2));
 

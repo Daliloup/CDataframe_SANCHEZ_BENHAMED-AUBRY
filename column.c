@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 int sizeof_coldata_ptr(COLUMN *col)
 {
     switch (col->column_type) {
@@ -53,7 +54,6 @@ int data_cmp(ENUM_TYPE enum_type, void *val1, void *val2)
     }
     return i;
 }
-
 
 COLUMN* create_column(ENUM_TYPE type, char *title){
     COLUMN *ptr, *new_column;
@@ -111,42 +111,63 @@ int index_convert(COLUMN *col, int i)
     return j;
 }
 
-
 void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
-    int num_of_char;
     if (col->data[i] == NULL) {
         strcpy(str, "NULL");
         return ;
     }
     switch (col->column_type) {
         case UINT: {
-           num_of_char = snprintf(str, size, "%llu", *(col->data[i]));
+           snprintf(str, size, "%llu", *(col->data[i]));
            break;
         }
         case INT: {
-            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            snprintf(str, size, "%d", *(col->data[i]));
             break;
         }
         case CHAR: {
-            num_of_char = snprintf(str, size, "%char", *(col->data[i]));
+            snprintf(str, size, "%char", *(col->data[i]));
             break;
         }
         case FLOAT: {
-            num_of_char = snprintf(str, size, "%f", *(col->data[i]));
+            snprintf(str, size, "%f", *(col->data[i]));
             break;
         }
         case DOUBLE: {
-            num_of_char = snprintf(str, size, "%lf", *(col->data[i]));
+            snprintf(str, size, "%lf", *(col->data[i]));
             break;
         }
         case STRING: {
-            num_of_char = snprintf(str, size, "%s", *(col->data[i]));
+            snprintf(str, size, "%s", *(col->data[i]));
             break;
         }
         case NULLVAL: {
-            num_of_char = snprintf(str, size, "%d", *(col->data[i]));
+            snprintf(str, size, "%d", *(col->data[i]));
             break;
         }
+    }
+}
+
+void print_col(COLUMN* col)
+{
+    char str[9];
+
+    printf("%s\n", col->title);
+    for (int i = 0; i < col->size; i++) {
+        convert_value(col, i, str, 8);
+        printf("[%lli] %s\n", col->index[i], str);
+    }
+}
+
+void print_col_by_index(COLUMN *col)
+{
+    char str[9];
+
+    printf("%s\n", col->title);
+    for (long long i = 0; i < col->size; i++) {
+        i = index_convert(col, i);
+        convert_value(col, i, str, 8);
+        printf("[%lli] %s\n", i, str);
     }
 }
 
@@ -159,7 +180,6 @@ void delete_column(COLUMN **col)
     free(*col);
     *col = NULL;
 }
-
 
 int occurrence(COLUMN *col, void *x)
 {

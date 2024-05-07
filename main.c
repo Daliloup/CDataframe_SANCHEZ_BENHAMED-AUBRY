@@ -8,24 +8,45 @@
 int main()
 {
     COLUMN *col = create_column(INT, "COLUMN 1");
-    int v0 = 0, v1 = 1, v2 = 2, v3 = 3;
+    int value1 = 2, value2=3, value3=8, value4 = 16, value5=12, value6=26, value7 = 29, value8=17, value9=1;
 
-    insert_value(col, &v1);
-    insert_value(col, &v2);
-    insert_value(col, &v3);
+    insert_value(col, &value1);
+    for (int i = 0; i < col->size; i++) {
+        printf("%d\n\n", *col->data[i]);
+    }
 
-    //replace_value_column(col, 1);
-    //for (int i = 0; i < col->size; i++) {
-    //    printf("%d ", *col->data[i]);
-    //}
-
+    insert_value(col, &value2);
+    insert_value(col, &value3);
+    insert_value(col, &value4);
+    insert_value(col, &value5);
+    insert_value(col, &value6);
+    insert_value(col, &value7);
+    insert_value(col, &value8);
+    insert_value(col, &value9);
+    for (int i = 0; i < col->size; i++) {
+        printf("%d\n", *col->data[i]);
+    }
+    printf("----------------------------------\n");
     print_col(col);
+    printf("\n");
+    print_col_by_index(col);
 
-    //printf("%d", data_cmp(UINT, &v3, &v2));
+    printf("----------------------------------\n");
 
-    //printf("\n%d\n", v2);
-    //printf("Occurrences: %d\n", occurrence(col, &v2));
-    //printf("Greater: %d\n", greater_than(col, &v2));
-    //printf("Lower: %d", lower_than(col, &v2));
+    for (int i = 0; i < col->size; i++) {
+        printf("%d\n", *col->data[col->index[i]]);
+    }
+    printf("After sorting :\n");
+    insertion_sort(col);
+    for (int i=0; i<col->size; i++){
+        printf("%d\n", *col->data[col->index[i]]);
+    }
+
+    printf("----------------------------------\n");
+    print_col(col);
+    printf("\n");
+    print_col_by_index(col);
+    printf("----------------------------------\n");
+
     return 0;
 }

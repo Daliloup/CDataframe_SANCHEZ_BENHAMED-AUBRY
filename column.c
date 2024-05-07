@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define ASC 0
+#define DESC 1
 
 int sizeof_coldata_ptr(COLUMN *col)
 {
@@ -102,13 +104,15 @@ int insert_value(COLUMN *col, void *value){
     return 1;
 }
 
-int index_convert(COLUMN *col, int i)
+unsigned long long int index_convert(COLUMN *col, int i)
 {
-    int j = 0;
-    while ((col->index[i] != i) && (i < col->size)) ++j;
+    /*unsigned long long int j = 0;
+    while ((col->index[j] != i) && (j < col->size)) ++j;
 
     if (j == col->size) return -1;
     return j;
+    */
+    return col->index[i];
 }
 
 void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
@@ -149,26 +153,25 @@ void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
     }
 }
 
-void print_col(COLUMN* col)
-{
-    char str[9];
-
-    printf("%s\n", col->title);
-    for (int i = 0; i < col->size; i++) {
-        convert_value(col, i, str, 8);
-        printf("[%lli] %s\n", col->index[i], str);
+void print_col(COLUMN* col){
+    char* string = (char*) malloc(sizeof(char*));
+    int i;
+    for (i=0 ; i < col->size ; i++){
+        convert_value(col, i, string, 100);
+        printf("[%d] %s\n", i, string);
     }
+    free(string);
 }
 
 void print_col_by_index(COLUMN *col)
 {
     char str[9];
-
     printf("%s\n", col->title);
-    for (long long i = 0; i < col->size; i++) {
-        i = index_convert(col, i);
-        convert_value(col, i, str, 8);
-        printf("[%lli] %s\n", i, str);
+    unsigned long long int j;
+    for (int i = 0; i < col->size; i++) {
+        j = index_convert(col, i);
+        convert_value(col, j, str, 8);
+        printf("[%d] %s\n", i, str);
     }
 }
 
@@ -252,3 +255,111 @@ void replace_value_column(COLUMN *col, int i)
         default:;
     }
 }
+
+void insertion_sort(COLUMN *col) {
+    int i, j;
+    unsigned long long int k;
+
+    switch (col->column_type) {
+        case (UINT):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(unsigned int *) (col->data[col->index[j]]) > *(unsigned int *) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        case (INT):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(int *) (col->data[col->index[j]]) > *(int *) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        case (CHAR):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(char *) (col->data[col->index[j]]) > *(char *) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        case (FLOAT):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(float *) (col->data[col->index[j]]) > *(float *) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        case (DOUBLE):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(double *) (col->data[col->index[j]]) > *(double *) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        case (STRING):
+            for (i = 2; i < col->size; i++) {
+                k = col->index[i];
+                j = i - 1;
+                while ((j >= 0) && (*(char**) (col->data[col->index[j]]) > *(char**) col->data[k])) {
+                    col->index[j + 1] = col->index[j];
+                    j--;
+                }
+                col->index[j + 1] = k;
+            }
+            break;
+        default:;
+    }
+}
+
+int partition(int* tab, int left, int right){
+    int pivot = tab[right];
+    int i = left - 1;
+    int temp;
+    for (int j = left; j < right ; j++){
+        if (tab[j] <= pivot){
+            i++;
+            temp = tab[i];
+            tab[i] = tab[j];
+            tab[j] = temp;
+        }
+    }
+    int temp2 = tab[i+1];
+    tab[i+1] = tab[right];
+    tab[right] = temp2;
+    return i+1;
+}
+
+void quick_sort(int* tab, int left, int right){
+    if (left < right){
+        int pi = partition(tab, left, right);
+        quick_sort(tab, left, pi-1);
+        quick_sort(tab, pi+1, right);
+    }
+}
+/*
+void sort(COLUMN *col, int sort_dir){
+    if (col->valid_index == 0){
+        quick_sort(col)
+    }
+}
+ */

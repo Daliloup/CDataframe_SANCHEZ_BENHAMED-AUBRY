@@ -112,7 +112,7 @@ int occurrence(COLUMN *col, void *x);
 void* value_with_position(COLUMN *col, int pos);
 
 // Returns the corresponding index in data
-int index_convert(COLUMN *col, int i);
+unsigned long long int index_convert(COLUMN *col, int i);
 
 
 /**
@@ -191,3 +191,11 @@ int search_value_in_column(COLUMN *col, void *val);
 void replace_value_column(COLUMN *col, int i);  // User Input
 
 #endif //COLUMN_H
+
+void insertion_sort(COLUMN *col);
+
+int partition(int* tab, int left, int right);
+
+void quick_sort(int* tab, int left, int right);
+
+void sort(COLUMN *col, int sort_dir);

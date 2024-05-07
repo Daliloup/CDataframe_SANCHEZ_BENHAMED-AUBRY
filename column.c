@@ -112,6 +112,7 @@ int index_convert(COLUMN *col, int i)
 }
 
 void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
+    int num_of_char;
     if (col->data[i] == NULL) {
         strcpy(str, "NULL");
         return ;
@@ -180,6 +181,7 @@ void delete_column(COLUMN **col)
     free(*col);
     *col = NULL;
 }
+
 
 int occurrence(COLUMN *col, void *x)
 {

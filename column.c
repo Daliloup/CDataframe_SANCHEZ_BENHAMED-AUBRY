@@ -104,15 +104,12 @@ int insert_value(COLUMN *col, void *value){
     return 1;
 }
 
-unsigned long long int index_convert(COLUMN *col, int i)
-{
-    /*unsigned long long int j = 0;
+unsigned long long int index_convert(COLUMN *col, int i){
+    unsigned long long int j = 0;
     while ((col->index[j] != i) && (j < col->size)) ++j;
 
     if (j == col->size) return -1;
     return j;
-    */
-    return col->index[i];
 }
 
 void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
@@ -169,7 +166,7 @@ void print_col_by_index(COLUMN *col)
     printf("%s\n", col->title);
     unsigned long long int j;
     for (int i = 0; i < col->size; i++) {
-        j = index_convert(col, i);
+        j = col->index[i];
         convert_value(col, j, str, 8);
         printf("[%d] %s\n", i, str);
     }
@@ -215,7 +212,9 @@ int lower_than(COLUMN *col, void *x)
 
 void* value_with_position(COLUMN *col, int pos)
 {
+    printf("----------------\n%d\n", pos);
     pos = index_convert(col, pos);
+    printf("%d\n-----------------------\n", pos);
 
     if (pos == -1) return NULL;
     return col->data[pos];

@@ -40,6 +40,12 @@ int main()
     printf("print_col_by_index\n");
     print_col_by_index(col);
     printf("----------------------------------\n");
+    printf("index : value\n");
+    for (int i=0 ; i<col->size ; i++){
+        printf("%llu : %d\n", col->index[i], *col->data[col->index[i]]);
+    }
+
+    printf("%d", *((int*) value_with_position(col, 2)));
 
     return 0;
 }

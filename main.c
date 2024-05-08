@@ -8,7 +8,7 @@
 int main()
 {
     COLUMN *col = create_column(INT, "COLUMN 1");
-    int value1 = 2, value2=3, value3=8, value4 = 16, value5=12, value6=26, value7 = 29, value8=17, value9=1;
+    int value1 = 8, value2=2, value3=3, value4 = 16, value5=12, value6=26, value7 = 29, value8=17, value9=1;
 
     insert_value(col, &value1);
     for (int i = 0; i < col->size; i++) {

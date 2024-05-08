@@ -272,35 +272,48 @@ void insertion_sort(COLUMN *col) {
 
 }
 
-int partition(int* tab, int left, int right){
-    int pivot = tab[right];
-    int i = left - 1;
-    int temp;
-    for (int j = left; j < right ; j++){
-        if (tab[j] <= pivot){
-            i++;
-            temp = tab[i];
-            tab[i] = tab[j];
-            tab[j] = temp;
+int partition(COLUMN *col, int left, unsigned int right){
+    int pivot_index = left;
+    int i = left;
+    unsigned long long int temp;
+    for (int j = left+1; j < right ; j++){
+        if (data_cmp(col->column_type, col->data[col->index[j]], col->data[col->index[pivot_index]]) == -1){
+            temp = col->index[i];
+            col->index[i] = col->index[j];
+            col->index[j] = temp;
         }
     }
-    int temp2 = tab[i+1];
-    tab[i+1] = tab[right];
-    tab[right] = temp2;
-    return i+1;
+    unsigned long long int temp2 = col->index[i];
+    col->index[i] = col->index[pivot_index];
+    col->index[pivot_index] = temp2;
+    return i;
 }
 
-void quick_sort(int* tab, int left, int right){
+void quick_sort(COLUMN *col, int left, unsigned int right){
     if (left < right){
-        int pi = partition(tab, left, right);
-        quick_sort(tab, left, pi-1);
-        quick_sort(tab, pi+1, right);
+        int pi = partition(col, left, right);
+        quick_sort(col, left, pi);
+        quick_sort(col, pi+1, right);
     }
 }
-/*
+
+void reverse(COLUMN *col){
+    int i = 0;
+    unsigned long long int temp;
+    while (i < col->size - i){
+        temp = col->index[i];
+        col->index[i] = col->index[col->size - i-1];
+        col->index[col->size - i-1] = temp;
+        i++;
+    }
+}
 void sort(COLUMN *col, int sort_dir){
     if (col->valid_index == 0){
-        quick_sort(col)
+        quick_sort(col, 0, col->size);
+    } else {
+        insertion_sort(col);
+    }
+    if (sort_dir == DESC){
+        reverse(col);
     }
 }
- */

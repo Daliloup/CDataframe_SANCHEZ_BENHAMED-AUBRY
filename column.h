@@ -194,8 +194,10 @@ void replace_value_column(COLUMN *col, int i);  // User Input
 
 void insertion_sort(COLUMN *col);
 
-int partition(int* tab, int left, int right);
+int partition(COLUMN *col, int left, unsigned int right);
 
-void quick_sort(int* tab, int left, int right);
+void quick_sort(COLUMN *col, int left, unsigned int right);
+
+void reverse(COLUMN *col);
 
 void sort(COLUMN *col, int sort_dir);

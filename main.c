@@ -11,10 +11,6 @@ int main()
     int value1 = 8, value2=2, value3=3, value4 = 16, value5=12, value6=26, value7 = 29, value8=17, value9=1;
 
     insert_value(col, &value1);
-    for (int i = 0; i < col->size; i++) {
-        printf("%d\n\n", *col->data[i]);
-    }
-
     insert_value(col, &value2);
     insert_value(col, &value3);
     insert_value(col, &value4);
@@ -23,28 +19,25 @@ int main()
     insert_value(col, &value7);
     insert_value(col, &value8);
     insert_value(col, &value9);
-    for (int i = 0; i < col->size; i++) {
-        printf("%d\n", *col->data[i]);
-    }
-    printf("----------------------------------\n");
+
+    printf("----------------------------------\nprint_col\n");
     print_col(col);
-    printf("\n");
+    printf("print_col_by_index\n");
     print_col_by_index(col);
 
     printf("----------------------------------\n");
 
-    for (int i = 0; i < col->size; i++) {
-        printf("%d\n", *col->data[col->index[i]]);
-    }
-    printf("After sorting :\n");
-    insertion_sort(col);
-    for (int i=0; i<col->size; i++){
-        printf("%d\n", *col->data[col->index[i]]);
-    }
 
-    printf("----------------------------------\n");
+    sort(col, ASC);
+    printf("After sorting :\nprint_col\n");
     print_col(col);
-    printf("\n");
+    printf("print_col_by_index\n");
+    print_col_by_index(col);
+    printf("----------------------------------\nAfter reversing :\n");
+    reverse(col);
+    printf("print_col\n");
+    print_col(col);
+    printf("print_col_by_index\n");
     print_col_by_index(col);
     printf("----------------------------------\n");
 

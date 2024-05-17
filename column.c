@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define ASC 0
+#define DESC 1
 
 int sizeof_coldata_ptr(COLUMN *col)
 {
@@ -99,13 +101,17 @@ int insert_value(COLUMN *col, void *value){
     col->data[col->size] = value;
     col->index[col->size] = col->size;
     col->size++;
+    if (col->valid_index == 1){
+        col->valid_index = -1;
+    } else if (col->valid_index == -1){
+        col->valid_index = 0;
+    }
     return 1;
 }
 
-int index_convert(COLUMN *col, int i)
-{
-    int j = 0;
-    while ((col->index[i] != i) && (i < col->size)) ++j;
+unsigned long long int index_convert(COLUMN *col, int i){
+    unsigned long long int j = 0;
+    while ((col->index[j] != i) && (j < col->size)) ++j;
 
     if (j == col->size) return -1;
     return j;
@@ -149,26 +155,25 @@ void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
     }
 }
 
-void print_col(COLUMN* col)
-{
-    char str[9];
-
-    printf("%s\n", col->title);
-    for (int i = 0; i < col->size; i++) {
-        convert_value(col, i, str, 8);
-        printf("[%lli] %s\n", col->index[i], str);
+void print_col(COLUMN* col){
+    char* string = (char*) malloc(sizeof(char*));
+    int i;
+    for (i=0 ; i < col->size ; i++){
+        convert_value(col, i, string, 100);
+        printf("[%d] %s\n", i, string);
     }
+    free(string);
 }
 
 void print_col_by_index(COLUMN *col)
 {
     char str[9];
-
     printf("%s\n", col->title);
-    for (long long i = 0; i < col->size; i++) {
-        i = index_convert(col, i);
-        convert_value(col, i, str, 8);
-        printf("[%lli] %s\n", i, str);
+    unsigned long long int j;
+    for (int i = 0; i < col->size; i++) {
+        j = col->index[i];
+        convert_value(col, j, str, 8);
+        printf("[%d] %s\n", i, str);
     }
 }
 
@@ -212,7 +217,9 @@ int lower_than(COLUMN *col, void *x)
 
 void* value_with_position(COLUMN *col, int pos)
 {
+    printf("----------------\n%d\n", pos);
     pos = index_convert(col, pos);
+    printf("%d\n-----------------------\n", pos);
 
     if (pos == -1) return NULL;
     return col->data[pos];
@@ -242,13 +249,113 @@ void replace_value_column(COLUMN *col, int i)
             scanf(" %f", col->data[i]);
             break;
         case DOUBLE:
-            printf("Enter value (int): ");
+            printf("Enter value (double): ");
             scanf(" %lf", col->data[i]);
             break;
         case STRING:
-            printf("Enter value (int): ");
+            printf("Enter value (string: ");
             gets(col->data[i]);
             break;
         default:;
     }
+}
+
+void insertion_sort(COLUMN *col) {
+    int i, j;
+    unsigned long long int k;
+
+    for (i = 1; i < col->size; i++) {
+        k = col->index[i];
+        j = i - 1;
+        while ( (j >= 0)  &&  data_cmp(col->column_type, (col->data[col->index[j]]), col->data[k]) == 1) {
+            col->index[j + 1] = col->index[j];
+            j--;
+        }
+        col->index[j + 1] = k;
+    }
+
+}
+
+int partition(COLUMN *col, int left, unsigned int right){
+    int pivot_index = left;
+    int i = left;
+    unsigned long long int temp;
+    for (int j = left+1; j < right ; j++){
+        if (data_cmp(col->column_type, col->data[col->index[j]], col->data[col->index[pivot_index]]) == -1){
+            temp = col->index[i];
+            col->index[i] = col->index[j];
+            col->index[j] = temp;
+        }
+    }
+    unsigned long long int temp2 = col->index[i];
+    col->index[i] = col->index[pivot_index];
+    col->index[pivot_index] = temp2;
+    return i;
+}
+
+void quick_sort(COLUMN *col, int left, unsigned int right){
+    if (left < right){
+        int pi = partition(col, left, right);
+        quick_sort(col, left, pi);
+        quick_sort(col, pi+1, right);
+    }
+}
+
+void reverse(COLUMN *col){
+    int i = 0;
+    unsigned long long int temp;
+    while (i < col->size - i){
+        temp = col->index[i];
+        col->index[i] = col->index[col->size - i-1];
+        col->index[col->size - i-1] = temp;
+        i++;
+    }
+}
+void sort(COLUMN *col, int sort_dir){
+    if (col->valid_index == 0){
+        quick_sort(col, 0, col->size);
+    } else {
+        insertion_sort(col);
+    }
+    if (sort_dir == DESC){
+        reverse(col);
+    }
+    col->valid_index = 1;
+}
+
+void erase_index(COLUMN *col){
+    free(col->index);
+    col->index = NULL;
+    col->valid_index = 0;
+}
+
+int check_index(COLUMN *col){
+    if (col->index == NULL) return 0;
+    if (col->valid_index == 1) return 1;
+    return -1;
+}
+
+void update_index(COLUMN *col){
+    sort(col, col->sort_dir);
+}
+
+int search_value_in_column(COLUMN *col, void *val){
+    unsigned int l = 0, r = col->size -1;
+    if (col->valid_index != 1) return -1;
+
+    int k;
+    while (l <= r){
+        k = data_cmp(col->column_type, val, col->data[col->index[(r+l)/2]]);
+        switch(k){
+            case -1:
+                r = ((l+r)/2) - 1;
+                break;
+            case 1:
+                l = ((l+r)/2) + 1;
+                break;
+            case 0:
+                return 1;
+        }
+    }
+    return 0;
 }

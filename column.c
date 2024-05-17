@@ -101,6 +101,11 @@ int insert_value(COLUMN *col, void *value){
     col->data[col->size] = value;
     col->index[col->size] = col->size;
     col->size++;
+    if (col->valid_index == 1){
+        col->valid_index = -1;
+    } else if (col->valid_index == -1){
+        col->valid_index = 0;
+    }
     return 1;
 }
 
@@ -244,11 +249,11 @@ void replace_value_column(COLUMN *col, int i)
             scanf(" %f", col->data[i]);
             break;
         case DOUBLE:
-            printf("Enter value (int): ");
+            printf("Enter value (double): ");
             scanf(" %lf", col->data[i]);
             break;
         case STRING:
-            printf("Enter value (int): ");
+            printf("Enter value (string: ");
             gets(col->data[i]);
             break;
         default:;
@@ -315,4 +320,42 @@ void sort(COLUMN *col, int sort_dir){
     if (sort_dir == DESC){
         reverse(col);
     }
+    col->valid_index = 1;
+}
+
+void erase_index(COLUMN *col){
+    free(col->index);
+    col->index = NULL;
+    col->valid_index = 0;
+}
+
+int check_index(COLUMN *col){
+    if (col->index == NULL) return 0;
+    if (col->valid_index == 1) return 1;
+    return -1;
+}
+
+void update_index(COLUMN *col){
+    sort(col, col->sort_dir);
+}
+
+int search_value_in_column(COLUMN *col, void *val){
+    unsigned int l = 0, r = col->size -1;
+    if (col->valid_index != 1) return -1;
+
+    int k;
+    while (l <= r){
+        k = data_cmp(col->column_type, val, col->data[col->index[(r+l)/2]]);
+        switch(k){
+            case -1:
+                r = ((l+r)/2) - 1;
+                break;
+            case 1:
+                l = ((l+r)/2) + 1;
+                break;
+            case 0:
+                return 1;
+        }
+    }
+    return 0;
 }

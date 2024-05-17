@@ -34,6 +34,7 @@ int main()
     printf("print_col_by_index\n");
     print_col_by_index(col);
     printf("----------------------------------\nAfter reversing :\n");
+    /*
     reverse(col);
     printf("print_col\n");
     print_col(col);
@@ -45,7 +46,21 @@ int main()
         printf("%llu : %d\n", col->index[i], *col->data[col->index[i]]);
     }
 
-    printf("%d", *((int*) value_with_position(col, 2)));
+    insert_value(col, &value5);
+    insert_value(col, &value6);
+    insert_value(col, &value7);
+    insert_value(col, &value8);
+    insert_value(col, &value9);
+     */
+    int a=1, b=5, c=10, d=55, e=26;
+    printf("----------------------------");
+    printf("%d", search_value_in_column(col, &a));
+    printf("%d", search_value_in_column(col, &b));
+    printf("%d", search_value_in_column(col, &c));
+    printf("%d", search_value_in_column(col, &d));
+    printf("%d", search_value_in_column(col, &e));
 
+    insert_value(col, &value5);
+    printf("%d", search_value_in_column(col, &e));
     return 0;
 }

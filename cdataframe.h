@@ -7,6 +7,7 @@
 
 #include "list.h"
 #include "column.h"
+#include <stdlib.h>
 
 typedef list CDATAFRAME;
 
@@ -14,7 +15,8 @@ typedef list CDATAFRAME;
 // Basic Operations (Constructors, selectors, etc...)
 CDATAFRAME *create_cdataframe();  // Will return empty doubly linked list;
 void delete_cdataframe(CDATAFRAME **cdf);
-void add_empty_column(CDATAFRAME *cdf, char *col_name, ENUM_TYPE *cdftype);
+void cdf_erase(CDATAFRAME *cdf);
+void add_empty_column(CDATAFRAME *cdf, char *col_name, ENUM_TYPE cdftype);
 void delete_column_cdataframe(CDATAFRAME *cdf, char *col_name);
 void delete_row_cdataframe(CDATAFRAME *cdf, int index);
 void *get_value_cdataframe(CDATAFRAME *cdf, int col, int row);

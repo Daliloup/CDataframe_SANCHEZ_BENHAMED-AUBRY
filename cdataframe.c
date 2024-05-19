@@ -115,3 +115,20 @@ int get_cdataframe_cols_size(CDATAFRAME *cdf){
     }
     return num_cols;
 }
+
+void set_new_value_cdataframe(CDATAFRAME *cdf, int i, int j){
+    lnode *node = cdf->head;
+    while ((j > 0) && (node != NULL)){
+        j--;
+        node = node->next;
+    }
+    if ((j > 0) || (node == NULL)){
+        printf("Index out of range. Nothing has been done\n");
+        return;
+    }
+    if (((COLUMN*)node->data)->size <= i){
+        printf("Index out of range. Nothing has been done\n");
+        return;
+    }
+    replace_value_column(node->data, i);
+}

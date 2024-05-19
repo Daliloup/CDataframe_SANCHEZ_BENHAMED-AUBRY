@@ -103,3 +103,15 @@ void display_cdataframe(CDATAFRAME *cdf)
         }
     }
 }
+
+int get_cdataframe_cols_size(CDATAFRAME *cdf){
+    lnode *node = cdf->head;
+    if (node == NULL) return 0;
+
+    int num_cols = 0;
+    while (node != NULL){
+        num_cols++;
+        node = node->next;
+    }
+    return num_cols;
+}

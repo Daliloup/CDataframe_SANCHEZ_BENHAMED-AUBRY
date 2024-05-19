@@ -51,7 +51,6 @@ int sizeof_coldata_ptr(COLUMN *col);
 // 1: val1 > val2
 int data_cmp(ENUM_TYPE enum_type, void *val1, void *val2);
 
-int insert_value(COLUMN *col, void *value);
 
 /**
 * Create a new column
@@ -109,10 +108,10 @@ int occurrence(COLUMN *col, void *x);
  * @param pos index of an element in the column
  * @return the element pointed by the pointer at index pos in the column
  */
-void* value_with_position(COLUMN *col, int pos);
+void* value_with_position(COLUMN *col, unsigned long long int pos);
 
 // Returns the corresponding index in data
-unsigned long long int index_convert(COLUMN *col, int i);
+unsigned long long int index_convert(COLUMN *col, unsigned long long int i);
 
 
 /**
@@ -200,4 +199,4 @@ void quick_sort(COLUMN *col, int left, unsigned int right);
 
 void reverse(COLUMN *col);
 
-void sort(COLUMN *col, int sort_dir);
+void delete_with_index(COLUMN* col, unsigned long long int i);

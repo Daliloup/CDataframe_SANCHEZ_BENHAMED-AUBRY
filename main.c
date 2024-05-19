@@ -53,14 +53,23 @@ int main()
     insert_value(col, &value9);
      */
     int a=1, b=5, c=10, d=55, e=26;
-    printf("----------------------------");
-    printf("%d", search_value_in_column(col, &a));
-    printf("%d", search_value_in_column(col, &b));
-    printf("%d", search_value_in_column(col, &c));
-    printf("%d", search_value_in_column(col, &d));
-    printf("%d", search_value_in_column(col, &e));
+    printf("----------------------------\n");
+    printf("%d\n", search_value_in_column(col, &a));
+    printf("%d\n", search_value_in_column(col, &b));
+    printf("%d\n", search_value_in_column(col, &c));
+    printf("%d\n", search_value_in_column(col, &d));
+    printf("%d\n", search_value_in_column(col, &e));
 
     insert_value(col, &value5);
-    printf("%d", search_value_in_column(col, &e));
+    printf("%d\n", search_value_in_column(col, &e));
+
+    sort(col, ASC);
+    printf("After sorting :\nprint_col\n");
+    print_col_by_index(col);
+
+    printf("Trying to delete an index\n");
+    delete_with_index(col, 7);
+    delete_with_index(col, 5);
+    print_col_by_index(col);
     return 0;
 }

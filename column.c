@@ -109,7 +109,7 @@ int insert_value(COLUMN *col, void *value){
     return 1;
 }
 
-unsigned long long int index_convert(COLUMN *col, int i){
+unsigned long long int index_convert(COLUMN *col, unsigned long long int i){
     unsigned long long int j = 0;
     while ((col->index[j] != i) && (j < col->size)) ++j;
 
@@ -215,11 +215,11 @@ int lower_than(COLUMN *col, void *x)
     return s;
 }
 
-void* value_with_position(COLUMN *col, int pos)
+void* value_with_position(COLUMN *col, unsigned long long int pos)
 {
-    printf("----------------\n%d\n", pos);
+    printf("----------------\n%llu\n", pos);
     pos = index_convert(col, pos);
-    printf("%d\n-----------------------\n", pos);
+    printf("%llu\n-----------------------\n", pos);
 
     if (pos == -1) return NULL;
     return col->data[pos];
@@ -358,4 +358,25 @@ int search_value_in_column(COLUMN *col, void *val){
         }
     }
     return 0;
+}
+
+void delete_with_index(COLUMN *col, unsigned long long int i){
+    unsigned long long int asso_index = col->index[i];
+    free(col->data[asso_index]);
+
+    unsigned long long int j = i;
+    while (j+1 < col->size){
+        col->index[j] = col->index[j+1];
+        j++;
+    }
+    col->index[j] = -1;
+
+    j = 0;
+    while (asso_index + j+1 < col->size) {
+        col->data[asso_index + j] = col->data[asso_index + j+1];
+        (col->index[index_convert(col,asso_index + j+1)])--;
+        j++;
+    }
+
+    (col->size)--;
 }

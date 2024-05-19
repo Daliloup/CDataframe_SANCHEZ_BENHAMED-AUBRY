@@ -62,7 +62,7 @@ void delete_row_cdataframe(CDATAFRAME *cdf, int index)
 {
     lnode *node = cdf->head;
     while (node != NULL) {
-        col
+        delete_with_index(node->data, index);
     }
 }
 

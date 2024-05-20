@@ -1,5 +1,8 @@
 //
 // Created by Yannis on 29/03/2024.
+// Project CDataFrame
+// Sanchez Dali, Benhamed--Aubry Yannis
+// This file contains all the functions related to the columns
 //
 
 #include "column.h"

@@ -67,11 +67,33 @@ int main()
     printf("%d", search_value_in_column(col, &e));
 
     */
+    /*
+    char* test;
+    printf("%s\n", test);
+
+    CDATAFRAME *cdf = create_cdataframe();
+    add_empty_column(cdf, "Test 1", FLOAT);
+    display_cdataframe(cdf);
+
+    rename_col_cdataframe(cdf, "Test 1", "Entier naturel");
+    display_cdataframe(cdf);
+
+    add_row_user(cdf);
+    display_cdataframe(cdf);
+
+    set_new_value_cdataframe(cdf, 0, 0);
+    display_cdataframe(cdf);
+    */
 
     CDATAFRAME *cdf = create_cdataframe();
     fill_cdataframe(cdf);
 
     display_cdataframe(cdf);
+
+    sort_dataframe_column(cdf, "ID");
+
+    display_cdataframe(cdf);
+
 
     return 0;
 }

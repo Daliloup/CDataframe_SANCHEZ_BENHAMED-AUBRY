@@ -51,5 +51,11 @@ void display_nb_less_cdataframe(CDATAFRAME *cdf, void *value);
 CDATAFRAME* load_from_csv(char *file_name);
 void save_into_csv(CDATAFRAME *cdf, char *file_name);
 
+// Other functions
+int get_string_size(char* str);
+void print_in_cdataframe(char *str);
+
+// This function sorts the dataframe with respect to one column given in parameter
+void sort_dataframe_column(CDATAFRAME *cdf, char *title);
 
 #endif

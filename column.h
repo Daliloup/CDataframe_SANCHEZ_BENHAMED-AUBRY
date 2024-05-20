@@ -200,3 +200,6 @@ void quick_sort(COLUMN *col, int left, unsigned int right);
 void reverse(COLUMN *col);
 
 void delete_with_index(COLUMN* col, unsigned long long int i);
+
+// This function copies the array index of the main column in the other column
+void copy_index(COLUMN *main_col, COLUMN *col);

@@ -105,6 +105,7 @@ void fill_cdataframe(CDATAFRAME *cdf)
         gets(title);
 
         add_empty_column(cdf, title, cdf_type);
+        //printf("%s - %d", ((COLUMN*)cdf->head->data)->title, ((COLUMN*)cdf->head->data)->column_type);
     }
 
     printf("\nNumber of rows: ");
@@ -125,9 +126,9 @@ void add_row_user(CDATAFRAME *cdf)
         switch (((COLUMN*)node->data)->column_type) {
             case UINT:
             {
-                unsigned int *i = (unsigned int*) malloc(sizeof(unsigned int));
+                unsigned long long int *i = (unsigned long long int*) malloc(sizeof(unsigned long long int));
                 printf("Enter value (uint): ");
-                scanf(" %ui", i);
+                scanf(" %llu", i);
                 insert_value((COLUMN*)node->data, i);
                 break;
             }
@@ -164,7 +165,12 @@ void add_row_user(CDATAFRAME *cdf)
                 printf("Enter value (string): ");
                 fflush(stdin);
                 gets(i);
-                insert_value((COLUMN *) node->data, i);
+                printf("%s\n", i);
+                printf("Alors ?\n");
+                insert_value((COLUMN *) node->data, &i);
+                printf("test\n");
+                printf("%s\n", ((COLUMN*) node->data)->data[((COLUMN*) node->data)->size]);
+                printf("EEEET\n");
                 break;
             }
         }
@@ -180,13 +186,34 @@ void display_col_names(CDATAFRAME *cdf)
         return;
     }
 
-    while (node->next != NULL) {
-        printf("%s | ", ((COLUMN*)node->data)->title);
+    int i;
+    printf("      |");
+    while (node != NULL) {
+        print_in_cdataframe(((COLUMN*)node->data)->title);
         node = node->next;
     }
-    printf("%s", ((COLUMN*)node->data)->title);
-
     printf("\n");
+}
+
+int get_string_size(char *str){
+    int size = 0;
+    while (str[size] != '\0'){
+        size++;
+    }
+    return size;
+}
+
+void print_in_cdataframe(char *str){
+    int i;
+    int size_str = get_string_size(str);
+    for ( i=0 ; i < (12- size_str)/2 ; i++){
+        printf(" ");
+    }
+    printf("%s", str);
+    for (i=0 ; i < 12 - (size_str + (12-size_str)/2) ; i++){
+        printf(" ");
+    }
+    printf("|");
 }
 
 void display_cdataframe(CDATAFRAME *cdf)
@@ -196,13 +223,19 @@ void display_cdataframe(CDATAFRAME *cdf)
     if (node == NULL) return;
 
     char str[21];
-    for (int i = 0; i < ((COLUMN*)node->data)->size; i++) {
+    int max = ((COLUMN*) node->data)->size;
+    for (int i = 0; i < max; i++) {
+        printf("[%d", i);
+        if (i<10) printf("]   |");
+        else if (i < 100) printf("]  |");
+        else if (i < 1000) printf("] |");
         node = cdf->head;
         while (node != NULL) {
-            convert_value((COLUMN*)node->data, i, str, 10);
-            printf("%s ", str);
+            convert_value((COLUMN*)node->data, ((COLUMN*)node->data)->index[i], str, 12);
+            print_in_cdataframe(str);
             node = node->next;
         }
+        printf("\n");
     }
 }
 
@@ -233,4 +266,23 @@ void set_new_value_cdataframe(CDATAFRAME *cdf, int i, int j){
         return;
     }
     replace_value_column(node->data, i);
+}
+
+void sort_dataframe_column(CDATAFRAME *cdf, char *title){
+    lnode *node = cdf->head;
+    if (node == NULL) return;
+    while ( strcmp(((COLUMN*)node->data)->title, title ) != 0){
+        node = node->next;
+        if (node == NULL){
+            printf("Column not found\n");
+            return;
+        }
+    }
+    lnode *main_node = node;
+    node = cdf->head;
+    update_index((COLUMN*)main_node->data);
+    while (node != NULL){
+        copy_index(main_node->data, node->data);
+        node = node->next;
+    }
 }

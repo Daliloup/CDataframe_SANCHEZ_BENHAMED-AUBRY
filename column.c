@@ -94,11 +94,43 @@ int insert_value(COLUMN *col, void *value){
         }
         col->data = ptr;
         col->index = ptr2;
-
         col->max_size = col->max_size + REALLOC_SIZE;
     }
+    printf("%f\n", *(float*)value);
 
-    col->data[col->size] = value;
+    switch (col->column_type){
+        case UINT: {
+            col->data[col->size] = (unsigned long long int*) value;
+            break;
+        }
+        case INT: {
+            col->data[col->size] = (int*) value;
+            break;
+        }
+        case CHAR: {
+            col->data[col->size] = (char*) value;
+            break;
+        }
+        case FLOAT: {
+            printf("%d here\n", *(col->data[col->size]));
+            col->data[col->size]->float_value = *(float*) value;
+            printf("%d here\n", *(col->data[col->size]));
+            break;
+        }
+        case DOUBLE: {
+            col->data[col->size] = (double*) value;
+            break;
+        }
+        case STRING: {
+            col->data[col->size] = (char**) value;
+            break;
+        }
+        case NULLVAL: {
+            break;
+        }
+    }
+
+    //col->data[col->size] = value;
     col->index[col->size] = col->size;
     col->size++;
     if (col->valid_index == 1){
@@ -106,6 +138,8 @@ int insert_value(COLUMN *col, void *value){
     } else if (col->valid_index == -1){
         col->valid_index = 0;
     }
+    printf("nickel\n");
+    print_col_by_index(col);
     return 1;
 }
 
@@ -125,15 +159,15 @@ void convert_value(COLUMN *col, unsigned long long int i, char *str, int size) {
     }
     switch (col->column_type) {
         case UINT: {
-           snprintf(str, size, "%llu", *(col->data[i]));
-           break;
+            snprintf(str, size, "%llu", *(col->data[i]));
+            break;
         }
         case INT: {
             snprintf(str, size, "%d", *(col->data[i]));
             break;
         }
         case CHAR: {
-            snprintf(str, size, "%char", *(col->data[i]));
+            snprintf(str, size, "%c", *(col->data[i]));
             break;
         }
         case FLOAT: {
@@ -167,12 +201,12 @@ void print_col(COLUMN* col){
 
 void print_col_by_index(COLUMN *col)
 {
-    char str[9];
+    char str[12];
     printf("%s\n", col->title);
     unsigned long long int j;
     for (int i = 0; i < col->size; i++) {
         j = col->index[i];
-        convert_value(col, j, str, 8);
+        convert_value(col, j, str, 12);
         printf("[%d] %s\n", i, str);
     }
 }
@@ -379,4 +413,10 @@ void delete_with_index(COLUMN *col, unsigned long long int i){
     }
 
     (col->size)--;
+}
+
+void copy_index(COLUMN *main_col, COLUMN *col){
+    for (int i=0 ; i < main_col->size ; i++){
+        col->index[i] = main_col->index[i];
+    }
 }

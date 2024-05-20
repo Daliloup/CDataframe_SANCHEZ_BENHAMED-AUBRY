@@ -63,27 +63,129 @@ void delete_row_cdataframe(CDATAFRAME *cdf, int index)
     lnode *node = cdf->head;
     while (node != NULL) {
         delete_with_index(node->data, index);
+        node = node->next;
     }
 }
 
-/*
+void rename_col_cdataframe(CDATAFRAME *cdf, char *title, char *new_title)
+{
+    lnode *node = cdf->head;
+    while ((node != NULL) && (strcmp(((COLUMN*)node->data)->title, title) != 0)) {
+        node = node->next;
+    }
+
+    if (node == NULL) return;
+    ((COLUMN*)node->data)->title = new_title;
+}
+
+void fill_cdataframe(CDATAFRAME *cdf)
+{
+    int nb_col, nb_row, i;
+    ENUM_TYPE cdf_type;
+
+    printf("Number of columns: ");
+    scanf("%d", &nb_col);
+    for (i = 0; i < nb_col; i++) {
+        char *title = (char*) malloc(sizeof(char) * 20);
+
+        printf("\nCOLUMN %d\n", i+1);
+        printf("[1.NULLVALUE, ");
+        printf("2.U_INT, ");
+        printf("3.INT, ");
+        printf("4.CHAR, ");
+        printf("5.FLOAT, ");
+        printf("6.DOUBLE, ");
+        printf("7.STRING]");
+        printf("\nWhich type? ");
+
+        scanf(" %d", &cdf_type);
+
+        printf("Title: ");
+        fflush(stdin);
+        gets(title);
+
+        add_empty_column(cdf, title, cdf_type);
+    }
+
+    printf("\nNumber of rows: ");
+    scanf(" %d", &nb_row);
+
+    for (i = 0; i < nb_row; i++) {
+        printf("Row %d\n", i+1);
+        add_row_user(cdf);
+    }
+    printf("\n");
+}
+
+
 void add_row_user(CDATAFRAME *cdf)
 {
     lnode *node = cdf->head;
     while (node != NULL) {
-        ask_value_user((COLUMN*)node->data);
+        switch (((COLUMN*)node->data)->column_type) {
+            case UINT:
+            {
+                unsigned int *i = (unsigned int*) malloc(sizeof(unsigned int));
+                printf("Enter value (uint): ");
+                scanf(" %ui", i);
+                insert_value((COLUMN*)node->data, i);
+                break;
+            }
+            case INT: {
+                int *i = (int*) malloc(sizeof(int));
+                printf("Enter value (int): ");
+                scanf(" %d", i);
+                insert_value((COLUMN *) node->data, i);
+                break;
+            }
+            case CHAR: {
+                char *i = (char*) malloc(sizeof(char));
+                printf("Enter value (char): ");
+                scanf(" %c", i);
+                insert_value((COLUMN *) node->data, i);
+                break;
+            }
+            case FLOAT: {
+                float *i = (float*) malloc(sizeof(float));
+                printf("Enter value (float): ");
+                scanf(" %f", i);
+                insert_value((COLUMN *) node->data, i);
+                break;
+            }
+            case DOUBLE: {
+                double *i = (double*) malloc(sizeof(double));
+                printf("Enter value (double): ");
+                scanf(" %lf", i);
+                insert_value((COLUMN *) node->data, i);
+                break;
+            }
+            case STRING: {
+                char *i = (char*) malloc(20*sizeof(char));
+                printf("Enter value (string): ");
+                fflush(stdin);
+                gets(i);
+                insert_value((COLUMN *) node->data, i);
+                break;
+            }
+        }
         node = node->next;
     }
 }
- */
 
 void display_col_names(CDATAFRAME *cdf)
 {
     lnode *node = cdf->head;
-    while (node != NULL) {
-        printf("%s ", ((COLUMN*)node->data)->title);
+    if (node == NULL){
+        printf("EMPTY_DATAFRAME");
+        return;
+    }
+
+    while (node->next != NULL) {
+        printf("%s | ", ((COLUMN*)node->data)->title);
         node = node->next;
     }
+    printf("%s", ((COLUMN*)node->data)->title);
+
     printf("\n");
 }
 

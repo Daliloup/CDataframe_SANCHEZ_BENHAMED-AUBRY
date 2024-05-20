@@ -38,6 +38,81 @@ void add_empty_column(CDATAFRAME *cdf, char *col_name, ENUM_TYPE cdftype)
     lst_insert_tail(cdf, lst_create_lnode(new_col));
 }
 
+void add_column_user(CDATAFRAME* cdf){
+    int i = get_cdataframe_cols_size(cdf);
+    ENUM_TYPE col_type;
+    char* col_name = (char*) malloc(20*sizeof(char));
+
+    printf("\nCOLUMN %d\n", i+1);
+    printf("[1.NULLVALUE, ");
+    printf("2.U_INT, ");
+    printf("3.INT, ");
+    printf("4.CHAR, ");
+    printf("5.FLOAT, ");
+    printf("6.DOUBLE, ");
+    printf("7.STRING]");
+    printf("\nWhich type? ");
+
+    scanf(" %d", &col_type);
+
+    printf("Title: ");
+    fflush(stdin);
+    gets(col_name);
+    COLUMN *new_col = create_column(col_type, col_name);
+    lst_insert_tail(cdf, lst_create_lnode(new_col));
+
+    i = 0;
+    while (i < get_nb_rows(cdf)){
+        switch (new_col->column_type) {
+            case UINT:
+            {
+                unsigned long long int *i = (unsigned long long int*) malloc(sizeof(unsigned long long int));
+                printf("Enter value (uint): ");
+                scanf(" %llu", i);
+                insert_value(new_col, i);
+                break;
+            }
+            case INT: {
+                int *i = (int*) malloc(sizeof(int));
+                printf("Enter value (int): ");
+                scanf(" %d", i);
+                insert_value(new_col, i);
+                break;
+            }
+            case CHAR: {
+                char *i = (char*) malloc(sizeof(char));
+                printf("Enter value (char): ");
+                scanf(" %c", i);
+                insert_value(new_col, i);
+                break;
+            }
+            case FLOAT: {
+                float *i = (float*) malloc(sizeof(float));
+                printf("Enter value (float): ");
+                scanf(" %f", i);
+                insert_value(new_col, i);
+                break;
+            }
+            case DOUBLE: {
+                double *i = (double*) malloc(sizeof(double));
+                printf("Enter value (double): ");
+                scanf(" %lf", i);
+                insert_value(new_col, i);
+                break;
+            }
+            case STRING: {
+                char *i = (char*) malloc(20*sizeof(char));
+                printf("Enter value (string): ");
+                fflush(stdin);
+                gets(i);
+                insert_value(new_col, i);
+                break;
+            }
+        }
+        i++;
+    }
+}
+
 void delete_column_cdataframe(CDATAFRAME *cdf, char *col_name)
 {
     lnode *node = cdf->head;
@@ -74,7 +149,10 @@ void rename_col_cdataframe(CDATAFRAME *cdf, char *title, char *new_title)
         node = node->next;
     }
 
-    if (node == NULL) return;
+    if (node == NULL){
+        printf("Column not found");
+        return;
+    }
     ((COLUMN*)node->data)->title = new_title;
 }
 
@@ -105,7 +183,6 @@ void fill_cdataframe(CDATAFRAME *cdf)
         gets(title);
 
         add_empty_column(cdf, title, cdf_type);
-        //printf("%s - %d", ((COLUMN*)cdf->head->data)->title, ((COLUMN*)cdf->head->data)->column_type);
     }
 
     printf("\nNumber of rows: ");
@@ -165,12 +242,7 @@ void add_row_user(CDATAFRAME *cdf)
                 printf("Enter value (string): ");
                 fflush(stdin);
                 gets(i);
-                printf("%s\n", i);
-                printf("Alors ?\n");
                 insert_value((COLUMN *) node->data, &i);
-                printf("test\n");
-                printf("%s\n", ((COLUMN*) node->data)->data[((COLUMN*) node->data)->size]);
-                printf("EEEET\n");
                 break;
             }
         }
@@ -268,7 +340,7 @@ void set_new_value_cdataframe(CDATAFRAME *cdf, int i, int j){
     replace_value_column(node->data, i);
 }
 
-void sort_dataframe_column(CDATAFRAME *cdf, char *title){
+void sort_dataframe_column(CDATAFRAME *cdf, char *title, int direction){
     lnode *node = cdf->head;
     if (node == NULL) return;
     while ( strcmp(((COLUMN*)node->data)->title, title ) != 0){
@@ -279,10 +351,76 @@ void sort_dataframe_column(CDATAFRAME *cdf, char *title){
         }
     }
     lnode *main_node = node;
+    ((COLUMN*)main_node->data)->sort_dir = direction;
     node = cdf->head;
     update_index((COLUMN*)main_node->data);
     while (node != NULL){
         copy_index(main_node->data, node->data);
+        ((COLUMN*) node->data)->valid_index = 0;
         node = node->next;
     }
+}
+
+int get_nb_rows(CDATAFRAME* cdf){
+    lnode *node = cdf->head;
+    if (node == NULL) return -1;
+
+    return ((COLUMN*) node->data)->size;
+}
+
+void* get_value_cdataframe(CDATAFRAME* cdf, int j, int i){
+    lnode *node = cdf->head;
+    while (node != NULL){
+        if (j == 0){
+            if (i < ((COLUMN*) node->data)->size){
+                char* str = (char*) malloc(20*sizeof(char));
+                convert_value(((COLUMN*) node->data), ((COLUMN*) node->data)->index[i], str, 20);
+                printf("%s", str);
+                return ((COLUMN*) node->data)->data[((COLUMN*) node->data)->index[i]];
+            } else{
+                printf("Row index out of range");
+                return NULL;
+            }
+        }
+        j--;
+        node = node->next;
+    }
+    printf("Column index out of range");
+    return NULL;
+}
+
+void display_nb_equal_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type){
+    lnode *node = cdf->head;
+    int n = 0;
+    while (node != NULL){
+        if (((COLUMN*) node->data)->column_type == type){
+            n = n + occurrence((COLUMN*) node->data, value);
+        }
+        node = node->next;
+    }
+    printf("%d", n);
+}
+
+void display_nb_greater_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type){
+    lnode *node = cdf->head;
+    int n = 0;
+    while (node != NULL){
+        if (((COLUMN*) node->data)->column_type == type){
+            n = n + greater_than((COLUMN*) node->data, value);
+        }
+        node = node->next;
+    }
+    printf("%d", n);
+}
+
+void display_nb_less_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type){
+    lnode *node = cdf->head;
+    int n = 0;
+    while (node != NULL){
+        if (((COLUMN*) node->data)->column_type == type){
+            n = n + lower_than((COLUMN*) node->data, value);
+        }
+        node = node->next;
+    }
+    printf("%d", n);
 }

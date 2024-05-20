@@ -42,9 +42,9 @@ void display_cdataframe(CDATAFRAME *cdf);
 void display_col_names(CDATAFRAME *cdf);
 void display_nb_rows(CDATAFRAME *cdf);
 void display_nb_columns(CDATAFRAME *cdf);
-void display_nb_equal_cdataframe(CDATAFRAME *cdf, void *value);
-void display_nb_greater_cdataframe(CDATAFRAME *cdf, void *value);
-void display_nb_less_cdataframe(CDATAFRAME *cdf, void *value);
+void display_nb_equal_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type);
+void display_nb_greater_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type);
+void display_nb_less_cdataframe(CDATAFRAME *cdf, void *value, ENUM_TYPE type);
 
 
 // CSV Saving and Loading
@@ -56,6 +56,7 @@ int get_string_size(char* str);
 void print_in_cdataframe(char *str);
 
 // This function sorts the dataframe with respect to one column given in parameter
-void sort_dataframe_column(CDATAFRAME *cdf, char *title);
+void sort_dataframe_column(CDATAFRAME *cdf, char *title, int direction);
+int get_nb_rows(CDATAFRAME* cdf);
 
 #endif

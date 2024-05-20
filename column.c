@@ -88,7 +88,6 @@ int insert_value(COLUMN *col, void *value){
             ptr = realloc(col->data, col->max_size + REALLOC_SIZE);
             ptr2 = (int*) realloc(col->index, col->max_size + REALLOC_SIZE);
         }
-
         if ((ptr == NULL) || (ptr2 == NULL)) {
             return 0;
         }
@@ -96,7 +95,6 @@ int insert_value(COLUMN *col, void *value){
         col->index = ptr2;
         col->max_size = col->max_size + REALLOC_SIZE;
     }
-    printf("%f\n", *(float*)value);
 
     switch (col->column_type){
         case UINT: {
@@ -112,9 +110,7 @@ int insert_value(COLUMN *col, void *value){
             break;
         }
         case FLOAT: {
-            printf("%d here\n", *(col->data[col->size]));
             col->data[col->size]->float_value = *(float*) value;
-            printf("%d here\n", *(col->data[col->size]));
             break;
         }
         case DOUBLE: {
@@ -138,8 +134,6 @@ int insert_value(COLUMN *col, void *value){
     } else if (col->valid_index == -1){
         col->valid_index = 0;
     }
-    printf("nickel\n");
-    print_col_by_index(col);
     return 1;
 }
 
@@ -251,10 +245,7 @@ int lower_than(COLUMN *col, void *x)
 
 void* value_with_position(COLUMN *col, unsigned long long int pos)
 {
-    printf("----------------\n%llu\n", pos);
     pos = index_convert(col, pos);
-    printf("%llu\n-----------------------\n", pos);
-
     if (pos == -1) return NULL;
     return col->data[pos];
 }
@@ -345,16 +336,27 @@ void reverse(COLUMN *col){
         i++;
     }
 }
-void sort(COLUMN *col, int sort_dir){
-    if (col->valid_index == 0){
-        quick_sort(col, 0, col->size);
-    } else {
-        insertion_sort(col);
+void sort(COLUMN *col){
+    if (col->sort_dir == ASC){
+        if (col->valid_index == 0){
+            quick_sort(col, 0, col->size);
+        } else{
+            insertion_sort(col);
+        }
+        col->valid_index = 1;
+        return;
     }
-    if (sort_dir == DESC){
+    if (col->sort_dir == DESC){
+        if (col->valid_index == 0){
+            quick_sort(col, 0, col->size);
+        } else{
+            insertion_sort(col);
+        }
         reverse(col);
+        col->valid_index = 1;
+        return;
     }
-    col->valid_index = 1;
+    printf("Wrong sorting direction argument\n");
 }
 
 void erase_index(COLUMN *col){
@@ -370,7 +372,7 @@ int check_index(COLUMN *col){
 }
 
 void update_index(COLUMN *col){
-    sort(col, col->sort_dir);
+    sort(col);
 }
 
 int search_value_in_column(COLUMN *col, void *val){

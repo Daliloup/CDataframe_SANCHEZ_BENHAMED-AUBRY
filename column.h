@@ -137,7 +137,7 @@ int lower_than(COLUMN *col, void *x);
 * @param1 Pointer to the column to sort
 * @param2 Sort type (ASC or DESC)
 */
-void sort(COLUMN* col, int sort_dir);
+void sort(COLUMN* col);
 
 
 /**

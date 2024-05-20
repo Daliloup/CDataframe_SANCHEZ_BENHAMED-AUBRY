@@ -1,6 +1,6 @@
 # CDataframe_SANCHEZ_BENHAMED-AUBRY
 
-**Link to the Github repository** : https://discord.com/channels/@me/1231540852443320422/1231696986533662812
+**Link to the Github repository** : https://github.com/Daliloup/CDataframe_SANCHEZ_BENHAMED-AUBRY.git
 
 This project is carried by Dali Sanchez and Yannis Benhamed--Aubry
 
